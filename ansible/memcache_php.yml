@@ -1,0 +1,35 @@
+---
+- hosts: fe
+  become: true
+  become_method: sudo
+  vars_files:
+    - vars/all.yml
+  tasks:
+    - name: Set session redundancy
+      lineinfile:
+        dest: /etc/php.d/memcache.ini
+        regexp: '^memcache.session_redundancy'
+        line: 'memcache.session_redundancy=5'
+        state: present
+    - name: Set memcache failover
+      lineinfile:
+        dest: /etc/php.d/memcache.ini
+        regexp: '^memcache.allow_failover'
+        line: 'memcache.allow_failover=1'
+        state: present
+    - name: Set memcache failover
+      lineinfile:
+        dest: /etc/php.d/memcache.ini
+        regexp: '^memcache.hash_strategy'
+        line: 'memcache.hash_strategy=consistent'
+        state: present
+    - name: Set save path
+      lineinfile:
+        dest: /etc/php.ini
+        regexp: '^session.save_path'
+        line: 'session.save_path="tcp://192.168.34.11:11211,tcp://192.168.34.12:11211,tcp://192.168.34.13:11211,tcp://192.168.34.14:11211"'
+        state: present
+    - name: Restart Apache
+      service:
+        name: httpd
+        state: restarted

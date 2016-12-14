@@ -1,0 +1,17 @@
+- name: Install Memcache
+  yum:
+    name: memcached
+    state: latest
+
+- name: Enable Memcache
+  service:
+    name: memcached
+    enabled: true
+
+- name: Configure memcache
+  lineinfile:
+    dest: /etc/sysconfig/memcached
+    regexp: '^OPTIONS='
+    line: 'OPTIONS="-l {{ ansible_eth1.ipv4.address }}"'
+    state: present
+  notify: Restart Memcached

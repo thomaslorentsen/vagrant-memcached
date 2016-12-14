@@ -1,0 +1,9 @@
+---
+- hosts: memcache
+  become: true
+  become_method: sudo
+  vars_files:
+    - vars/all.yml
+  roles:
+    - common
+    - memcached
